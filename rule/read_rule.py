@@ -23,7 +23,7 @@ def read_rule_from_start_point_vertical(sheet_entity, start_point) -> list:
         jr=JudgementRule.create_by_sheet_range(rule_range)
         res_list.append(jr)
 
-        print(rule_range.value)
+        # print(rule_range.value)
         start_range = next_start_range
     return res_list
 
@@ -50,4 +50,5 @@ def read_rule(xlapp, file_path, sheet_list) -> list:
             # 一个起始点的规则列，是总规则列的一部分
             site_rule_list = read_rule_from_start_point_vertical(sheet_entity, start_point)
             return_list.extend(site_rule_list)
+    setting_workbook.close()
     return return_list

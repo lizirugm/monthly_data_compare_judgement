@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Optional
 
 
 class JudgementRule:
@@ -28,7 +28,16 @@ class JudgementRule:
         :param standard_value:  标准值/原结果
         :return:  如果有允差返回Decimal允差，如果不符合任何一个规则，则返回None
         """
-        result_list = [x for x in self.site_rule_list if x.judge_value_in_rule(standard_value) == True]
+        result_list = []
+        for x in self.site_rule_list:
+            try:
+                test1 = x.judge_value_in_rule(standard_value)
+                if test1 == True:
+                    result_list.append(x)
+                    break
+            except:
+                continue
+
         if len(result_list) > 0:
             # 如果筛选结果有数，则筛选成功，否则失败，代表这个传入的数字不符合任何一个子规则
             return result_list[0].franchise
@@ -51,6 +60,8 @@ class JudgementRule:
         :param xlrange: xl的range，格式比较固定
         :return: 创建好的类
         """
+        def compare_site_rule(x):
+            return x.min_value
         xl_value = xlrange.value
         element_name = xl_value[0][0]
         sheet_name = xlrange.sheet.name
@@ -58,10 +69,12 @@ class JudgementRule:
         judge_rule.element_name = element_name
         judge_rule.sample_name = sheet_name
         range_list = xlrange.value
+        judge_rule.site_rule_list = []
         for site_list in range_list:
             if len(site_list) == 3 and site_list[1] is not None and site_list[2] is not None:
                 sr1 = SiteRule.create(site_list[1], site_list[2])
                 judge_rule.site_rule_list.append(sr1)
+        judge_rule.site_rule_list.sort(key=compare_site_rule)
         return judge_rule
 
 
@@ -78,12 +91,12 @@ class SiteRule:
     franchise = 0
 
     def __init__(self):
-        min_value = 0
-        max_value = 0
-        min_type = ">"
-        max_type = "<="
+        self.min_value = 0
+        self.max_value = 0
+        self.min_type = ">"
+        self.max_type = "<="
         # 允差
-        franchise = 0
+        self.franchise = 0
         pass
 
     @staticmethod
@@ -105,7 +118,7 @@ class SiteRule:
                     site_rule.min_type = ">="
             except:
                 return site_rule
-        elif (len(list1) == 2):
+        elif len(list1) == 2:
             try:
                 min_str = list1[0]
                 max_str = list1[1]
@@ -126,7 +139,6 @@ class SiteRule:
         else:
             return site_rule
         return site_rule
-
 
     def judge_value_in_rule(self, val) -> bool:
         """
