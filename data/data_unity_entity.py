@@ -64,7 +64,8 @@ class DataUnitedEntity:
         for index, origin_value in enumerate(data_inherit_list[0]):
             element_name = element_list[index]
             current_value = data_inherit_list[1][index]
-            de = DataEntity.create(origin_value, current_value, element_name, new_due.sample_name, new_due.mat_sample_no)
+            de = DataEntity.create(origin_value, current_value, element_name, new_due.sample_name,
+                                   new_due.mat_sample_no)
             data_list.append(de)
         return data_list
 
@@ -92,14 +93,15 @@ class DataUnitedEntity:
             if len(fit_data_list) == 0:
                 data_start_range.options(transpose=True).value = [None, None, None, None]
             else:
-                fit_data:DataEntity = fit_data_list[0]
+                fit_data: DataEntity = fit_data_list[0]
                 quantize_str = quantize_setting.get(self.sample_name, '0.000')
                 this_data_vertical_4_range = data_start_range.resize(row_size=4, column_size=None)
                 this_data_vertical_4_range.api.NumberFormat = "@"
                 data_start_range.options(transpose=True).value = [fit_data.get_origin_value_str(),
-                                                                       fit_data.get_current_value_str(),
-                                                                       fit_data.get_diff_value_str(),
-                                                                       fit_data.get_franchise_str(self.site_rule_list_inherit)]
+                                                                  fit_data.get_current_value_str(),
+                                                                  fit_data.get_diff_value_str(),
+                                                                  fit_data.get_franchise_str(
+                                                                      self.site_rule_list_inherit)]
                 qualified = fit_data.get_qualified(self.site_rule_list_inherit)
                 # 占据此次数据渲染的竖排四个格子
 
